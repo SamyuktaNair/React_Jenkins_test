@@ -1,21 +1,23 @@
-const { Builder, By, until } = require('selenium-webdriver');
-const { expect } = require('chai');
+import { Builder, By, until } from 'selenium-webdriver';
+import assert from 'assert';
 
-describe('Vite + React App UI Test', function () {
+describe('React App UI Test', function () {
   this.timeout(30000);
+
   let driver;
 
-  before(async () => {
+  before(async function () {
     driver = await new Builder().forBrowser('chrome').build();
   });
 
-  after(async () => {
+  after(async function () {
     await driver.quit();
   });
 
-  it('should open Vite React app homepage', async () => {
-    await driver.get('http://localhost:5173');
+  it('should load the homepage', async function () {
+    await driver.get('http://localhost:5173/');
     const title = await driver.getTitle();
-    expect(title).to.include('Vite + React');
+    assert.strictEqual(title, 'React App');
   });
 });
+
