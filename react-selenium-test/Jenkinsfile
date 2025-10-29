@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    environment {
+        CHROME_BIN = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/<username>/react-selenium-test.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Start Vite App') {
+            steps {
+                sh 'nohup npm run dev &'
+                sleep 8  // wait for dev server
+            }
+        }
+
+        stage('Run Selenium Tests') {
+            steps {
+                sh 'npx mocha tests/test_ui.js --reporter spec'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh 'pkill -f "vite" || true'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution complete.'
+        }
+    }
+}
