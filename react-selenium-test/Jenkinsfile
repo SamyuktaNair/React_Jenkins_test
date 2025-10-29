@@ -26,6 +26,7 @@ pipeline {
                     sh 'npm install'
                 }
         }
+        }
 
         stage('Build App') {
             steps {
