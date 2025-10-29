@@ -1,8 +1,15 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node' 
+    }
+
+
     environment {
         CHROME_BIN = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        NODE_ENV = 'test'
+
     }
 
     stages {
@@ -13,27 +20,49 @@ pipeline {
         }
 
         stage('Install Dependencies') {
+             steps {
+                dir('react-selenium-test') {
+                    echo 'Installing Node dependencies...'
+                    sh 'npm install'
+                }
+        }
+
+        stage('Build App') {
             steps {
-                sh 'npm install'
+                dir('react-selenium-test') {
+                    echo 'Building React app...'
+                    sh 'npm run build'
+                }
             }
         }
 
         stage('Start Vite App') {
             steps {
-                sh 'nohup npm run dev &'
-                sleep 8  
+                dir('react-selenium-test') {
+                    echo 'Starting Vite development server...'
+                    
+                    sh 'nohup npm run dev &'
+                    echo 'Waiting for the app to start...'
+                    sleep 10
+                }
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                sh 'npx mocha tests/test_ui.js --reporter spec'
+                dir('react-selenium-test/tests') {
+                    echo 'Running Selenium tests...'
+                    
+                    sh 'npm test'
+                }
             }
         }
 
         stage('Cleanup') {
             steps {
-                sh 'pkill -f "vite" || true'
+                echo 'Cleaning up background processes...'
+                
+                sh "pkill -f 'node' || true"
             }
         }
     }
