@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/<username>/react-selenium-test.git'
+                git branch: 'main', url: 'https://github.com/SamyuktaNair/React_Jenkins_test.git'
             }
         }
 
@@ -21,7 +21,7 @@ pipeline {
         stage('Start Vite App') {
             steps {
                 sh 'nohup npm run dev &'
-                sleep 8  // wait for dev server
+                sleep 8  
             }
         }
 
